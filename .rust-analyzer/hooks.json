@@ -91,6 +91,13 @@
     "HookLineInvoke": 9
   },
   {
+    "HookSignature": "OnEventTrigger(TriggeredEventPrefab triggeredEventPrefab)",
+    "MethodSignature": "RunEvent()",
+    "MethodSourseCode": "\n\tpublic override void RunEvent()\n\t{\n\t\tif (Interface.CallHook(\u0022OnEventTrigger\u0022, this) != null)\n\t\t{\n\t\t\treturn;\n\t\t}\n\t\tDebug.Log(\u0022[event] \u0022 \u002B targetPrefab.resourcePath);\n\t\tBaseEntity baseEntity = GameManager.server.CreateEntity(targetPrefab.resourcePath);\n\t\tif ((bool)baseEntity)\n\t\t{\n\t\t\tbaseEntity.SendMessage(\u0022TriggeredEventSpawn\u0022, SendMessageOptions.DontRequireReceiver);\n\t\t\tbaseEntity.Spawn();\n\t\t\tbaseEntity.SendMessage(\u0022TriggeredEventPostSpawn\u0022, SendMessageOptions.DontRequireReceiver);\n\t\t\tspawnedEntity = baseEntity;\n\t\t\tif (shouldBroadcastSpawn)\n\t\t\t{\n\t\t\t\tBasePlayer.Server_SendWorldNotificationToAllActivePlayers(notificationType, spawnedEntity.transform.position);\n\t\t\t}\n\t\t}\n\t}\n",
+    "ClassName": "TriggeredEventPrefab",
+    "HookLineInvoke": 3
+  },
+  {
     "HookSignature": "CanLootEntity(BasePlayer player, LootableCorpse lootableCorpse)",
     "MethodSignature": "RPC_LootCorpse(RPCMessage rpc)",
     "MethodSourseCode": "\n\t[RPC_Server.IsVisible(3f)]\n\t[RPC_Server]\n\tprivate void RPC_LootCorpse(RPCMessage rpc)\n\t{\n\t\tBasePlayer player = rpc.player;\n\t\tif (!player || !player.CanInteract() || !CanLoot() || containers == null || Interface.CallHook(\u0022CanLootEntity\u0022, player, this) != null || !player.inventory.loot.StartLootingEntity(this))\n\t\t{\n\t\t\treturn;\n\t\t}\n\t\tSetFlag(Flags.Open, b: true);\n\t\tfor (int i = 0; i \u003C containers.Length; i\u002B\u002B)\n\t\t{\n\t\t\tItemContainer itemContainer = containers[i];\n\t\t\tif (CanLootContainer(itemContainer, i))\n\t\t\t{\n\t\t\t\tplayer.inventory.loot.AddContainer(itemContainer);\n\t\t\t}\n\t\t}\n\t\tplayer.inventory.loot.SendImmediate();\n\t\tplayer.RadioactiveLootCheck(player.inventory.loot.containers);\n\t\tClientRPC(RpcTarget.Player(\u0022RPC_ClientLootCorpse\u0022, player));\n\t\tSendNetworkUpdate();\n\t}\n",
