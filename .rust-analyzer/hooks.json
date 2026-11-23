@@ -371,6 +371,13 @@
     "HookLineInvoke": 23
   },
   {
+    "HookSignature": "OnFrame(object[] args)",
+    "MethodSignature": "OnFrame(float delta)",
+    "MethodSourseCode": "\n\tprivate void OnFrame(float delta)\n\t{\n\t\tobject[] args = new object[1] { delta };\n\t\tforeach (KeyValuePair\u003Cstring, Plugin\u003E loadedPlugin in loader.LoadedPlugins)\n\t\t{\n\t\t\tif (loadedPlugin.Value is CSharpPlugin { HookedOnFrame: not false } cSharpPlugin)\n\t\t\t{\n\t\t\t\tcSharpPlugin.CallHook(\u0022OnFrame\u0022, args);\n\t\t\t}\n\t\t}\n\t}\n",
+    "ClassName": "CSharpExtension",
+    "HookLineInvoke": 8
+  },
+  {
     "HookSignature": "Unload()",
     "MethodSignature": "HandleRemovedFromManager(PluginManager manager)",
     "MethodSourseCode": "\n\tpublic override void HandleRemovedFromManager(PluginManager manager)\n\t{\n\t\tif (base.IsLoaded)\n\t\t{\n\t\t\tCallHook(\u0022Unload\u0022, null);\n\t\t}\n\t\tWatcher.RemoveMapping(base.Name);\n\t\tbase.Manager.OnPluginAdded -= OnPluginLoaded;\n\t\tbase.Manager.OnPluginRemoved -= OnPluginUnloaded;\n\t\tforeach (KeyValuePair\u003Cstring, MemberInfo\u003E pluginReferenceMember in pluginReferenceMembers)\n\t\t{\n\t\t\tif (pluginReferenceMember.Value.MemberType == MemberTypes.Property)\n\t\t\t{\n\t\t\t\t((PropertyInfo)pluginReferenceMember.Value).SetValue(this, null, null);\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t((FieldInfo)pluginReferenceMember.Value).SetValue(this, null);\n\t\t\t}\n\t\t}\n\t\tbase.HandleRemovedFromManager(manager);\n\t}\n",
